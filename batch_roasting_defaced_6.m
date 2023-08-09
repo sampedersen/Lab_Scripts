@@ -20,7 +20,7 @@
 % 1. Make sure that roast-3.0 and its subdirectories are added to the
 % MATLAB path 
 % 2. Make sure the current folder is also roast-3.0
-%
+% 3. Have Fun ;)
 %
 %--------------------------------------------------------------------------
 %% Current montage info  
@@ -43,6 +43,9 @@ t1_names = {'T1.nii', 'T1_defaced.nii', 'T1.reface.nii', 'T1.deface.nii'};
 
 % Base directory where all the participant folders are hosted 
 base_dir = 'P:\WoodsLab\ACT-head_models\FEM\Ayden\deface\new_montage\';
+
+% Conductivity File used to convert electric field to current density
+condFile = fullfile(pwd,'cond_6tis.mat');
 
 % List of participants to process; only includes the 6 digit-identifiers 
 participants = [101190];
@@ -86,7 +89,9 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-            
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
                 
             % During the second iteration (i=2), process the mri_deface T1
             case 2
@@ -103,7 +108,10 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-                
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+
             % During the third iteration (i=3), process the mideface T1
             case 3 
                 % Third iteration, processing mideface
@@ -118,7 +126,10 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-                
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+
             % During the fourth iteration (i=4), process the fsl_deface T1
             case 4
                 % Fourth iteration, processing fsl_deface
@@ -133,7 +144,10 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-            
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+
             % During the fifth iteration (i=5), process the afni_reface T1
             case 5
                 % Fifth iteration, processing afni_reface
@@ -148,7 +162,10 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-                
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+
             % During the sixth iteration (i=6), process the afni_deface T1
             case 6
                 % Sixth iteratoin, processing afni_deface 
@@ -163,7 +180,10 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
-                
+                resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+
             % Error message if trying to index outside of established
             % algorithm list 
             otherwise 
