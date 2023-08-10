@@ -44,8 +44,11 @@ t1_names = {'T1.nii', 'T1_defaced.nii', 'T1.reface.nii', 'T1.deface.nii'};
 % Base directory where all the participant folders are hosted 
 base_dir = 'P:\WoodsLab\ACT-head_models\FEM\Ayden\deface\new_montage\';
 
-% Conductivity File used to convert electric field to current density
-condFile = fullfile(pwd,'cond_6tis.mat');
+% Establish directory and location of .mat file containing conductivity
+% values 
+% Note: THIS IS HARDCODED! MAKE SURE THE CONDUCTIVITIES ARE HERE!!! 
+cond_dir = 'P:\WoodsLab\ACT-head_models\FEM\Sam\Scripts\MATLAB\ROAST\conductivities';
+condFile = fullfile(cond_dir,'cond_6tis.mat');
 
 % List of participants to process; only includes the 6 digit-identifiers 
 participants = [101190];
@@ -62,7 +65,6 @@ for p= 1:length(participants)
     % Combine with base_dir to form the full path to the specific 
     % participant's folder 
     folder_location = strcat(base_dir, num2str(participant),'\');
-    disp(folder_location);
     
     % For this participant, perform the following for each of the 
     % algorithms listed in `algorithms`
@@ -89,8 +91,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
                 
             % During the second iteration (i=2), process the mri_deface T1
@@ -108,8 +116,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function               
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
 
             % During the third iteration (i=3), process the mideface T1
@@ -126,8 +140,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file                 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function                
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
 
             % During the fourth iteration (i=4), process the fsl_deface T1
@@ -144,8 +164,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file                 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function                
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
 
             % During the fifth iteration (i=5), process the afni_reface T1
@@ -162,8 +188,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file                 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function                
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
 
             % During the sixth iteration (i=6), process the afni_deface T1
@@ -180,8 +212,14 @@ for p= 1:length(participants)
                 disp(message);
                 % Perform the ROAST 
                 roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                % Extract JBrain and JRoast values from roastResult.mat
+                % Create a list of files that correspond to naming for
+                % roastResult.mat file                 
                 resfdr = dir(fullfile(algorithm_folder,'*roastResult.mat'));
+                % If the created list is empty (ie, roastResult.mat DNE),
+                % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
+                % If the list is not empty, perform the extraction function                
                 ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
 
             % Error message if trying to index outside of established
