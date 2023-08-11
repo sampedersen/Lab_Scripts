@@ -9,8 +9,8 @@
 
 % Input
 % resFile (char) : absolute path to *_roastResult.mat file
-% condFile (char) : absolute path to .mat file containing conductivities
-function ef2j(resFile,condFile)
+% numTissues (char) : Specify the number of tissues to be ROASTed
+function ef2j(resFile,numTissues)
 
     if ~contains(resFile,'roastResult') % Only works with this file
         error('Please Supply the *_roastResult.mat File');
@@ -39,7 +39,8 @@ function ef2j(resFile,condFile)
     template.hdr.dime.cal_min = 0;
 
     % Create Conductivity Masks
-    load(condFile,'cond') % Load conductivity values
+    condDir = fullfile(fileparts(mfilename('fullpath')),'conductivities');
+    load(fullfile(condDir,['cond_' numTissues 'tis.mat']),'cond') % Load conductivity values
     allCond=zeros(size(ef_mag,1),size(ef_mag,2),size(ef_mag,3));
     maskName = fieldnames(cond); maskName = maskName(1:end-2);
     numOfTissue = length(maskName);

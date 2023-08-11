@@ -47,8 +47,7 @@ base_dir = 'P:\WoodsLab\ACT-head_models\FEM\Ayden\deface\new_montage\';
 % Establish directory and location of .mat file containing conductivity
 % values 
 % Note: THIS IS HARDCODED! MAKE SURE THE CONDUCTIVITIES ARE HERE!!! 
-cond_dir = 'P:\WoodsLab\ACT-head_models\FEM\Sam\Scripts\MATLAB\ROAST\conductivities';
-condFile = fullfile(cond_dir,'cond_6tis.mat');
+numTissues = questdlg('How many tissues are you ROASTing?','NumTissues','6','11','6');
 
 % List of participants to process; only includes the 6 digit-identifiers 
 participants = [101190];
@@ -99,7 +98,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
                 
             % During the second iteration (i=2), process the mri_deface T1
             case 2
@@ -124,7 +123,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function               
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
 
             % During the third iteration (i=3), process the mideface T1
             case 3 
@@ -148,7 +147,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function                
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
 
             % During the fourth iteration (i=4), process the fsl_deface T1
             case 4
@@ -172,7 +171,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function                
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
 
             % During the fifth iteration (i=5), process the afni_reface T1
             case 5
@@ -196,7 +195,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function                
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
 
             % During the sixth iteration (i=6), process the afni_deface T1
             case 6
@@ -220,7 +219,7 @@ for p= 1:length(participants)
                 % end the script and print out an error message                
                 if isempty(resfdr); error(['Cannot Locate ROAST results in ' algorithm_folder]); end
                 % If the list is not empty, perform the extraction function                
-                ef2j(fullfile(algorithm_folder,resfdr.name),condFile)
+                ef2j(fullfile(algorithm_folder,resfdr.name),numTissues)
 
             % Error message if trying to index outside of established
             % algorithm list 
