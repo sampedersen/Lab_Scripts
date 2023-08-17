@@ -37,7 +37,7 @@ algorithms = {'original','mri_deface', 'mideface', 'fsl_deface', 'afni_reface', 
 
 % List of the syntaxes for T1 files. Each algorithm defaced the T1 and
 % modified the naming structure to indicate defacing with slight
-% differences. For example, mri_deface produced T1_defaced.ni while
+% differences. For example, mri_deface produced T1_defaced.nii while
 % afni_reface produced T1.reface.nii
 t1_names = {'T1.nii', 'T1_defaced.nii', 'T1.reface.nii', 'T1.deface.nii'};
 
@@ -90,7 +90,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{1});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file 
@@ -114,7 +115,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{1});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file 
@@ -139,7 +141,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{3});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file                 
@@ -163,7 +166,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{4});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file                 
@@ -187,7 +191,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{5});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file                 
@@ -211,7 +216,8 @@ for p= 1:length(participants)
                 message = sprintf('ROASTing %d''s %s T1 ...', participant, algorithms{6});
                 disp(message);
                 % Perform the ROAST 
-                % roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+                roast(T1,{'P3',-2,'P4',2},'electype',{'pad','pad'},'elecsize',{[70 50 3],[70 50 3]});
+               
                 % Extract JBrain and JRoast values from roastResult.mat
                 % Create a list of files that correspond to naming for
                 % roastResult.mat file                 
