@@ -22,8 +22,9 @@ function ef2j(resFile,condFile)
      % Get Result File from ROAST
     [dirname,fullFilename] = fileparts(resFile);
     fparts = regexp(fullFilename,'_','split');
-    [baseFilename,uniTag,~,] = deal(fparts{:});
-
+    uniTag = fparts{end-1};
+    baseFilename = fullFilename(1:regexp(fullFilename,uniTag)-2);
+    
     % Find Head Segmentation
     amfdr = dir(fullfile(dirname,[baseFilename '*_masks.nii']));
     if isempty(amfdr); error(['Could not locate allMask in ' dirname]); end
