@@ -20,29 +20,29 @@ Read each function and discern necessary variables needed to be changed.
 %{
   Move source_dir into target_dir 
   
-  source_dir = Directory to be moved 
+  source = Directory/file to be moved 
   target_dir = Target location to move the directory into 
 
 %}
 
-% Change this to be the directory you want to move 
-source_dir = 'P:\WoodsLab\ACT-head_models\';
-% Change this to be the directory you want to move folder/files into 
+% Change this to be the directory/file you want to move 
+source = 'P:\WoodsLab\ACT-head_models\';
+% Change this to be the directory you want to move the directory/file into 
 target_dir = 'W:\camctrp\working\';
-% If both of the specifies folders/files exist, try to move them 
-if exist(source_dir) ~= 0 && exist(target_dir) ~= 0
+% If both of the specified folders/file exist, try to move it 
+if exist(source) ~= 0 && exist(target_dir) ~= 0
   try 
     % Move the files 
-    movefile(source_dir,target_dir);
+    movefile(source,target_dir);
     % Display confirmation that files were moved 
-    disp('Moved source folder to target directory successfully.');
+    disp('Moved source folder/file to target directory successfully.');
   catch 
     % Notify of error in case unable to move files 
-    disp('Failed to move folder.');
+    disp('Failed to move folder/file.');
   end
 % If both/one of the files/folders DNE, notify of error and double-check inputs. 
 else
-  disp('Specified target/source directories do not exist as indicated.');
+  disp('Specified target/source directories/file do not exist as indicated.');
 end
 
 
