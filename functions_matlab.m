@@ -23,7 +23,7 @@ Read each function and discern necessary variables needed to be changed.
   source_dir = Directory to be moved 
   target_dir = Target location to move the directory into 
 
-}%
+%}
 
 source_dir = 'P:\WoodsLab\ACT-head_models\';
 target_dir = 'W:\camctrp\working\';
