@@ -46,3 +46,27 @@ else
 end
 
 
+%% Get file names from directory 
+%{
+  Create a cell array containing the file names for a directory's contents. 
+  File names will be stored in a cell array titled "names".
+
+  target_dir = The directory to acquire file names from 
+  
+%}
+% Change this to be the directory you want to retrieve file names from 
+target_dir = 'P:\WoodsLab\ACT-head_models\FEM\';
+% Retrieve all contents and meta data from directory 
+contents = dir(target_dir);
+% Pre-allocate cell array to size of directory (remove 2 units to account for . and ..) 
+names = cell(1,length(contents)-2);
+% For each intem in the folder (excluding . and .. directory navigators) 
+for i = 3:length(contents)
+    % Retrieve the file name 
+    file_name = contents(i).name;
+    % Add the file name to cell array of names 
+    names{i-2} = file_name;
+end
+
+
+
