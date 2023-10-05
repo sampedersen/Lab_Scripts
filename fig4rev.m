@@ -56,7 +56,6 @@ end
 
 % Actual - Ideal
 [~,~,~,stats] = ttest(alldata(:,:,1),alldata(:,:,2));
-
 tmap = reshape(stats.tstat,[182 218 182]); tmap(tmap<4.073) = 0;
 tn = make_nii(tmap); tn.hdr.hist = nii.hdr.hist; 
 save_nii(tn,fullfile(rootDir,'tmap.nii'));
