@@ -116,8 +116,8 @@ for i = 1:length(info)
     if length(ttime) > 1; ttime = ttime(1); end % Just get first ?
     
     % Convert Tag for Data Type
-    bvp_tag = ceil((tags - bvp(1))*bvp(2)); % In seconds from start
-    eda_tag = ceil((tags - eda(1))*eda(2)); % In seconds from start
+    bvp_tag = ceil(seconds(ttime - stime)*bvp(2)); % In seconds from start
+    eda_tag = ceil(seconds(ttime - stime)*eda(2)); % In seconds from start
     
     % Get Data
     data{i,1} = bvp(bvp_tag:end); % Get full e4
