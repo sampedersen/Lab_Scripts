@@ -85,10 +85,12 @@ parfor i = 1:length(zipfdr)
 end
 toc
 %% Extract Data (Takes a long time ...)
+tic
 info = unique(label(all(~isnan(label),2),:),'rows'); info(1,:) = [];
 info(:,4:5) = nan(length(info),2);
 data = cell(length(info),2);
 for i = 1:length(info)
+    [stime, ttime, etime, tags, bvp_tag, eda_tag, bvp, eda] = deal([]); % Start Fresh
     try
         tags = readmatrix(fullfile(outDir, ...
             ['sub-',num2str(info(i,1)),'_ses-', ...
@@ -114,8 +116,8 @@ for i = 1:length(info)
     if length(ttime) > 1; ttime = ttime(1); end % Just get first ?
     
     % Convert Tag for Data Type
-    bvp_tag = round(seconds(ttime - stime)*bvp(2)); % In seconds from start
-    eda_tag = round(seconds(ttime - stime)*eda(2)); % In seconds from start
+    bvp_tag = ceil((tags - bvp(1))*bvp(2)); % In seconds from start
+    eda_tag = ceil((tags - eda(1))*eda(2)); % In seconds from start
     
     % Get Data
     data{i,1} = bvp(bvp_tag:end); % Get full e4
@@ -124,7 +126,6 @@ for i = 1:length(info)
     % Get Session Info
     info(i,4:5) = [contains(records{records{:,2} == info(i,1),3},'Cognitive'), ...
         contains(records{records{:,2} == info(i,1),3},'+ tDCS')];
-    clear stime ttime etime tags bvp_tag eda_tag bvp eda;
 end
 
 % REMOVE MISSING SESSIONS
@@ -143,6 +144,7 @@ eda_data = cell2mat(cellfun(@(x) [x(1:eda_mlen)],data(:,2),'UniformOutput',false
 writematrix(bvp_data,fullfile(rootDir,'bvp_data.csv'))
 writematrix(eda_data,fullfile(rootDir,'eda_data.csv'))
 writematrix(info,fullfile(rootDir,'info.csv'))
+toc
 %% Check out the Data
 clearvars -except alldata info
 bvp_data = detrend(bvp_data,5); % Flatten Timeseries
