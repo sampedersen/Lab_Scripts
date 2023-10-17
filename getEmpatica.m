@@ -1,3 +1,6 @@
+%% Collect and Visualize the Empatica E4 Data from ACT
+% Created by Alejandro Albizu on 10/10/2023
+% Last Updated: 10/17/2023 by AA
 clear
 
 % Settings
@@ -82,38 +85,92 @@ parfor i = 1:length(zipfdr)
 end
 toc
 %% Extract Data (Takes a long time ...)
-baseFilename = 'BVP.csv';
-
-info = unique(label(all(~isnan(label),2),:),'rows');
+info = unique(label(all(~isnan(label),2),:),'rows'); info(1,:) = [];
 info(:,4:5) = nan(length(info),2);
-data = cell(length(info),1);
+data = cell(length(info),2);
 for i = 1:length(info)
     try
         tags = readmatrix(fullfile(outDir, ...
             ['sub-',num2str(info(i,1)),'_ses-', ...
             num2str(info(i,2)),'_tags.csv'])); % Event Tags
-        e4 = readmatrix(fullfile(outDir, ...
+        bvp = readmatrix(fullfile(outDir, ...
             ['sub-',num2str(info(i,1)),'_ses-', ...
-            num2str(info(i,2)),'_',baseFilename])); % Raw Data
+            num2str(info(i,2)),'_BVP.csv'])); % Raw Data
+        eda = readmatrix(fullfile(outDir, ...
+            ['sub-',num2str(info(i,1)),'_ses-', ...
+            num2str(info(i,2)),'_EDA.csv'])); % Raw Data
         fclose all;
-        if isempty(e4); continue; end
+        if isempty(bvp) || isempty(eda); continue; end
     catch
         continue;
     end
-    stime = datetime(e4(1,1),'ConvertFrom','posixtime'); % Start Time
+    
+    % Session Timimg
+    stime = datetime(bvp(1,1),'ConvertFrom','posixtime'); % Start Time
     ttime = datetime(tags,'ConvertFrom','posixtime'); % Tag Time
-    etime = stime+seconds((length(e4)-2)/e4(2)); % End Time
+    etime = stime+seconds((length(bvp)-2)/bvp(2)); % End Time
     ttime = ttime(ttime > stime & ttime < etime & seconds(etime-ttime) > 1800); % Tag > start & < end & > 30 mins
     if isempty(ttime); continue; end % No good Tags
     if length(ttime) > 1; ttime = ttime(1); end % Just get first ?
-    tag = round(seconds(ttime - stime)*e4(2)); % In seconds from start
-    data{i} = e4(tag:end); % Get full e4
-    info(i,5:6) = [contains(records{records{:,2} == info(i,1),3},'Cognitive'), ...
+    
+    % Convert Tag for Data Type
+    bvp_tag = round(seconds(ttime - stime)*bvp(2)); % In seconds from start
+    eda_tag = round(seconds(ttime - stime)*eda(2)); % In seconds from start
+    
+    % Get Data
+    data{i,1} = bvp(bvp_tag:end); % Get full e4
+    data{i,2} = eda(eda_tag:end); % Get full e4
+    
+    % Get Session Info
+    info(i,4:5) = [contains(records{records{:,2} == info(i,1),3},'Cognitive'), ...
         contains(records{records{:,2} == info(i,1),3},'+ tDCS')];
-    clear stime ttime etime tags tag e4;
+    clear stime ttime etime tags bvp_tag eda_tag bvp eda;
 end
-info = info(~cellfun(@isempty,data),:);
-data = data(~cellfun(@isempty,data));
 
-writematrix(alldata,fullfile(rootDir,'data.csv'))
+% REMOVE MISSING SESSIONS
+info = info(~cellfun(@isempty,data),:);
+data = data(all(~cellfun(@isempty,data),2),:); 
+
+% Minimum Session Time (Remove Extra Data)
+bvp_mlen = min(cellfun(@length,data(:,1)));
+eda_mlen = min(cellfun(@length,data(:,2)));
+
+% Cut to Size
+bvp_data = cell2mat(cellfun(@(x) [x(1:bvp_mlen)],data(:,1),'UniformOutput',false)');
+eda_data = cell2mat(cellfun(@(x) [x(1:eda_mlen)],data(:,2),'UniformOutput',false)');
+
+% Save Data
+writematrix(bvp_data,fullfile(rootDir,'bvp_data.csv'))
+writematrix(eda_data,fullfile(rootDir,'eda_data.csv'))
 writematrix(info,fullfile(rootDir,'info.csv'))
+%% Check out the Data
+clearvars -except alldata info
+bvp_data = detrend(bvp_data,5); % Flatten Timeseries
+ismax = islocalmax(bvp_data,'MinProminence',1); % Find Peaks
+
+% Compute HR Variability
+hrv = nan(size(bvp_data,2),1); 
+for i = 1:size(ismax,2)
+    hrv(i) = std(diff(find(ismax(:,i))/64));
+end
+
+% Average HRV per Group per Session (smoothed)
+davg = nan(20,4);
+for d = 1:20
+    davg(d,1) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 1 & info(:,6) == 1),'omitnan'));
+    davg(d,2) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 0 & info(:,6) == 1),'omitnan'));
+    davg(d,3) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 1 & info(:,6) == 0),'omitnan'));
+    davg(d,4) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 0 & info(:,6) == 0),'omitnan'));
+end
+
+% Plot
+figure;
+subplot(121); plot(davg-davg(1,:));
+xlabel Session
+ylabel HRV
+legend({'CT+TDCS','ET+TDCS','CT','ET'})
+subplot(122);
+gscatter(hrv(info(:,3)~=0),info(info(:,3)~=0,3),...
+info(info(:,3)~=0,6)); lsline
+ylabel Nervousness
+xlabel HRV
