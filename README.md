@@ -6,8 +6,7 @@ This repository is a collection of scripts/code utilized within the Woods Neurom
 * conductivities
 
 ### Files 
-* ef2j.m
-* fig4rev.m
-* checkFileExistence.mlx
-* getEmpatica.m
-* functions_matlab.m
+* **ef2j.m:** Convert electric field values to current density values
+* **fig4rev.m:** \[Alejandro\]
+* **getEmpatica.m:** \[Alejandro\]
+* **functions_matlab.m:** Misc MATLAB functions with formatting for user-implementation 
