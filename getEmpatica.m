@@ -77,7 +77,10 @@ parfor i = 1:length(zipfdr)
     % 
     try
         record = records{records{:,2} == str2double(sub),1};
-        outcome = str2double(outcomes{strcmp(outcomes{:,1},record) & strcmp(outcomes{:,4},day),59})-str2double(outcomes{strcmp(outcomes{:,1},record) & strcmp(outcomes{:,4},day),20});
+        outcome = sum(str2double(outcomes{strcmp(outcomes{:,1},record) & ...
+            strcmp(outcomes{:,4},day),[59 62]})) ...
+            -sum(str2double(outcomes{strcmp(outcomes{:,1},record) & ...
+            strcmp(outcomes{:,4},day),[20 24]}));
         label(i,:) = [str2double(sub) str2double(day) outcome];
     catch ME
         disp([sub '-' num2str(day) ': ' ME.message]); continue
@@ -129,16 +132,16 @@ for i = 1:length(info)
 end
 
 % REMOVE MISSING SESSIONS
-info = info(~cellfun(@isempty,data),:);
+info = info(all(~cellfun(@isempty,data),2),:);
 data = data(all(~cellfun(@isempty,data),2),:); 
 
-% Minimum Session Time (Remove Extra Data)
-bvp_mlen = min(cellfun(@length,data(:,1)));
-eda_mlen = min(cellfun(@length,data(:,2)));
+% Exactly 40 mins
+bvp_mlen = max(cellfun(@length,data(:,1)));
+eda_mlen = max(cellfun(@length,data(:,2)));
 
 % Cut to Size
-bvp_data = cell2mat(cellfun(@(x) [x(1:bvp_mlen)],data(:,1),'UniformOutput',false)');
-eda_data = cell2mat(cellfun(@(x) [x(1:eda_mlen)],data(:,2),'UniformOutput',false)');
+bvp_data = cell2mat(cellfun(@(x) x(1:40*60*bvp(2)), cellfun(@(x) [x;nan(max(40*60*bvp(2)-length(x),0),1)],data(:,1),'uni',0),'uni',0)');
+eda_data = cell2mat(cellfun(@(x) x(1:40*60*eda(2)), cellfun(@(x) [x;nan(max(40*60*eda(2)-length(x),0),1)],data(:,2),'uni',0),'uni',0)');
 
 % Save Data
 writematrix(bvp_data,fullfile(rootDir,'bvp_data.csv'))
@@ -146,7 +149,7 @@ writematrix(eda_data,fullfile(rootDir,'eda_data.csv'))
 writematrix(info,fullfile(rootDir,'info.csv'))
 toc
 %% Check out the Data
-clearvars -except alldata info
+clearvars -except bvp_data eda_data info
 bvp_data = detrend(bvp_data,5); % Flatten Timeseries
 ismax = islocalmax(bvp_data,'MinProminence',1); % Find Peaks
 
@@ -156,23 +159,43 @@ for i = 1:size(ismax,2)
     hrv(i) = std(diff(find(ismax(:,i))/64));
 end
 
+sc = median(eda_data,'omitnan')';
+
 % Average HRV per Group per Session (smoothed)
 davg = nan(20,4);
 for d = 1:20
-    davg(d,1) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 1 & info(:,6) == 1),'omitnan'));
-    davg(d,2) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 0 & info(:,6) == 1),'omitnan'));
-    davg(d,3) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 1 & info(:,6) == 0),'omitnan'));
-    davg(d,4) = smooth(mean(hrv(info(:,2) == d & info(:,5) == 0 & info(:,6) == 0),'omitnan'));
+    davg(d,1) = smooth(median(hrv(info(:,2) == d & info(:,4) == 1 & info(:,5) == 1),'omitnan'));
+    davg(d,2) = smooth(median(hrv(info(:,2) == d & info(:,4) == 0 & info(:,5) == 1),'omitnan'));
+    davg(d,3) = smooth(median(hrv(info(:,2) == d & info(:,4) == 1 & info(:,5) == 0),'omitnan'));
+    davg(d,4) = smooth(median(hrv(info(:,2) == d & info(:,4) == 0 & info(:,5) == 0),'omitnan'));
+end
+
+% Average Skin Conductance per Session (smoothed)
+eavg = nan(20,4);
+for d = 1:20
+    eavg(d,1) = smooth(median(sc(info(:,2) == d & info(:,4) == 1 & info(:,5) == 1),'omitnan'));
+    eavg(d,2) = smooth(median(sc(info(:,2) == d & info(:,4) == 0 & info(:,5) == 1),'omitnan'));
+    eavg(d,3) = smooth(median(sc(info(:,2) == d & info(:,4) == 1 & info(:,5) == 0),'omitnan'));
+    eavg(d,4) = smooth(median(sc(info(:,2) == d & info(:,4) == 0 & info(:,5) == 0),'omitnan'));
 end
 
 % Plot
 figure;
-subplot(121); plot(davg-davg(1,:));
+subplot(221); plot(davg-davg(1,:));
 xlabel Session
 ylabel HRV
 legend({'CT+TDCS','ET+TDCS','CT','ET'})
-subplot(122);
+subplot(222);
 gscatter(hrv(info(:,3)~=0),info(info(:,3)~=0,3),...
-info(info(:,3)~=0,6)); lsline
+info(info(:,3)~=0,5)); lsline
 ylabel Nervousness
 xlabel HRV
+subplot(223); plot(eavg-eavg(1,:));
+xlabel Session
+ylabel EDA
+legend({'CT+TDCS','ET+TDCS','CT','ET'})
+subplot(224);
+gscatter(sc(info(:,3)~=0),info(info(:,3)~=0,3),...
+info(info(:,3)~=0,5)); lsline
+ylabel Nervousness
+xlabel 'Skin Conductance'
