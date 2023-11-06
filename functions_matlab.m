@@ -15,7 +15,6 @@ Read each function and discern necessary variables needed to be changed.
 -------------------------------------------------------------------------
 %}
 
-
 %% Move directories 
 %{
   Move source_dir into target_dir 
@@ -45,6 +44,7 @@ else
   disp('Specified target/source directories/file do not exist as indicated.');
 end
 
+% -------------------------------------------------------------------------
 
 %% Get file names from directory 
 %{
@@ -68,5 +68,21 @@ for i = 3:length(contents)
     names{i-2} = file_name;
 end
 
+% -------------------------------------------------------------------------
 
+%% Extract 6-digit participant number
+%{
+  Isolate the 6-digit participant number from the overall folder syntax (FS6.0_sub-999999_ses01)
+  pattern = Syntax to isolate (6 digits) 
+  names = Cell array of participant's full folder names (see get file names function above) 
+  participant_numbers = Cell containing isolated identifiers 
+%}
+
+% Establish the pattern to isolate for 
+pattern = '\d{6}';
+% Pre allocate list of participant numbers 
+participant_numbers = cell(1,length(names));
+for j=1:length(names)
+    participant_numbers{j} = regexp(names{j}, pattern, 'match');
+end
 
