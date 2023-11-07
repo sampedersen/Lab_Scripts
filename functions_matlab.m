@@ -86,3 +86,20 @@ for j=1:length(names)
     participant_numbers{j} = regexp(names{j}, pattern, 'match');
 end
 
+% -------------------------------------------------------------------------
+
+%% Check if file exists, create if DNE 
+%{
+
+   Insert info here 
+   
+%}
+
+% Check if file exists
+% If dir DNE, make it 
+if exist(item)== 0
+    mkdir(item)
+    fprintf('Created the directory "%s".\n',item)
+else 
+    fprintf('"%s" already exists. Skipping and moving to next participant.\n',item)
+end
